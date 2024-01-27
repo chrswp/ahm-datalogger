@@ -12,9 +12,11 @@ def add_outline(layout):
     return container_widget
 
 import sys
+print(sys.executable)
 import os
+import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QDateEdit, \
-    QRadioButton, QComboBox, QPushButton, QLabel, QGridLayout, QSpacerItem, QSizePolicy, QTableWidget, QTextEdit, QFrame
+    QRadioButton, QComboBox, QPushButton, QLabel, QGridLayout, QSpacerItem, QSizePolicy, QTableWidget, QTextEdit, QFrame, QHeaderView
 
 from PyQt6.QtGui import  QColor, QPainter, QFont, QBrush, QIcon
 from PyQt6.QtCore import Qt, QDate, QElapsedTimer, QTimer, QCoreApplication  # Add QDate to the import statement
@@ -25,6 +27,8 @@ from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis  # Import
 #from proximity import read_proximity_sensor  # Replace 'ProximitySensor' with the actual class name
 
 class MainWindow(QMainWindow):
+
+
 
     def print_chart(self):
         # Create a folder named 'chart_print' if it doesn't exist
@@ -68,7 +72,7 @@ class MainWindow(QMainWindow):
         axis_y.setRange(0, 5000)  # Adjust the range based on your data
 
         # Set labels for the axes
-        axis_x.setTitleText("Cycle")
+        axis_x.setTitleText("Test")
         axis_y.setTitleText("RPM")
 
         # Add axes to the chart
@@ -88,6 +92,12 @@ class MainWindow(QMainWindow):
         nc_value = [500, 500, 700, 600, 800, 3000, 2000, 2000, 2000, 2000, 2000, 2000]  # Replace 'your_nc_data' with your NC data
         nocc_value = [300, 100, 400, 700, 400, 1000, 3000, 3000, 3000, 3000, 3000, 3000]  # Replace 'your_nocc_data' with your NOCC data
         ratio_value = [200, 400, 200, 200, 500, 4000, 3000, 3500, 3500, 3500, 3500,3500]  # Replace 'your_ratio_data' with your Ratio data
+
+        # Ensure that each series has data points for x values from 1 to 10
+        ne_value += [0] * (10 - len(ne_value))
+        nc_value += [0] * (10 - len(nc_value))
+        nocc_value += [0] * (10 - len(nocc_value))
+        ratio_value += [0] * (10 - len(ratio_value))
 
         # Add data points to the NE series
         data_points_ne = [(i, val) for i, val in enumerate(ne_value, start=1)]
@@ -165,52 +175,102 @@ class MainWindow(QMainWindow):
     # Add this method to your MainWindow class
     def reset_indicators(self):
         self.buttonNE.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 30px; }")
+        self.buttonNE1.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 30px; }")
+        self.buttonNE2.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 30px; }")
+
         self.buttonNC.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
+        self.buttonNC1.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
+        self.buttonNC2.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
+
         self.buttonNOCC.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
+        self.buttonNOCC1.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
+        self.buttonNOCC2.setStyleSheet("QFrame { background-color: grey; border: 2px solid grey; border-radius: 13px; }")
 
     def create_indicator(self, color):
         # Create a QVBoxLayout to hold the indicator elements
         indicator_layout = QVBoxLayout()
 
-        # Create a square-shaped QFrame
+        # Create indicator_frame
         indicator_frame = QFrame()
         indicator_frame.setFixedWidth(80)
         indicator_frame.setFixedHeight(25)
-        indicator_frame.setStyleSheet(f"QFrame {{ background-color: grey; border-radius: 13px; }}")
-
+        indicator_frame.setStyleSheet("QFrame { background-color: grey; border-radius: 13px; }")
 
         # Add the square to the layout
         indicator_layout.addWidget(indicator_frame)
+
         indicator_layout.setContentsMargins(0, 0, 0, 0)
+
 
         # Create a QRadioButton to hold the layout
         indicator_button = QRadioButton()
         indicator_button.setLayout(indicator_layout)
 
         # Set a fixed size for the indicator button
-        indicator_button.setFixedSize(80, 25)
+        indicator_button.setFixedSize(90, 25)
 
         return indicator_button
 
     def clear_indicator_frame_background(self):
         # Clear the background-color of the indicator_frame
         self.buttonNE.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNE1.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNE2.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+
         self.buttonNC.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNC1.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNC2.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+
         self.buttonNOCC.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNOCC1.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
+        self.buttonNOCC2.layout().itemAt(0).widget().setStyleSheet("QFrame { background-color: ; }")
 
     def update_color_indicators(self):
         ne_color = "grey" if self.buttonNE.isChecked() else "green"
+        ne_color1 = "grey" if self.buttonNE1.isChecked() else "green"
+        ne_color2 = "grey" if self.buttonNE2.isChecked() else "green"
+
+
         nc_color = "grey" if self.buttonNC.isChecked() else "green"
+        nc_color1 = "grey" if self.buttonNC1.isChecked() else "green"
+        nc_color2 = "grey" if self.buttonNC2.isChecked() else "green"
+
         nocc_color = "grey" if self.buttonNOCC.isChecked() else "green"
+        nocc_color1 = "grey" if self.buttonNOCC1.isChecked() else "green"
+        nocc_color2 = "grey" if self.buttonNOCC2.isChecked() else "green"
 
         self.buttonNE.setStyleSheet(
             f"QFrame {{ border: 2px solid {ne_color}; border-radius: 30px; background-color: {ne_color}; }}"
         )
+        self.buttonNE1.setStyleSheet(
+            f"QFrame {{ border: 2px solid {ne_color1}; border-radius: 30px; background-color: {ne_color1}; }}"
+        )
+        self.buttonNE2.setStyleSheet(
+            f"QFrame {{ border: 2px solid {ne_color2}; border-radius: 30px; background-color: {ne_color2}; }}"
+        )
+
+
+
         self.buttonNC.setStyleSheet(
             f"QFrame {{ border: 2px solid {nc_color}; border-radius: 13px; background-color: {nc_color}; }}"
         )
+        self.buttonNC1.setStyleSheet(
+            f"QFrame {{ border: 2px solid {nc_color1}; border-radius: 13px; background-color: {nc_color1}; }}"
+        )
+        self.buttonNC2.setStyleSheet(
+            f"QFrame {{ border: 2px solid {nc_color2}; border-radius: 13px; background-color: {nc_color2}; }}"
+        )
+
+
+
         self.buttonNOCC.setStyleSheet(
             f"QFrame {{ border: 2px solid {nocc_color}; border-radius: 13px; background-color: {nocc_color}; }}"
+        )
+        self.buttonNOCC1.setStyleSheet(
+            f"QFrame {{ border: 2px solid {nocc_color1}; border-radius: 13px; background-color: {nocc_color1}; }}"
+        )
+        self.buttonNOCC2.setStyleSheet(
+            f"QFrame {{ border: 2px solid {nocc_color2}; border-radius: 13px; background-color: {nocc_color2}; }}"
         )
 
         # Clear the background-color of the indicator_frame
@@ -243,7 +303,7 @@ class MainWindow(QMainWindow):
         # Add this function to your MainWindow class
 
         self.setWindowTitle("Rotary Encoder Data Logger")
-        self.resize(1018, 744)  # Set initial size
+        self.resize(1366, 768)  # Set initial size
 
         # Create central widget and layout
         central_widget = QWidget()
@@ -278,8 +338,8 @@ class MainWindow(QMainWindow):
         # Add date input form
         self.date_input = QDateEdit()
         self.date_input.setObjectName("date_input")
-        self.date_input.setMinimumSize(150, 22)
-        self.date_input.setMaximumSize(150, 22)
+        self.date_input.setMinimumSize(250, 32)
+        self.date_input.setMaximumSize(250, 32)
         self.date_input.setCalendarPopup(True)
         self.date_input.setDate(QDate.currentDate())  # Set initial date to the current date
         combined_layout_left.addWidget(self.date_input)
@@ -287,13 +347,13 @@ class MainWindow(QMainWindow):
         # Add layout for the text_input and radio_button pair
         row_layout = QHBoxLayout()
         row_label = QLabel("Model")
-        row_label.setFixedWidth(80)
+        row_label.setFixedWidth(150)
         text_input = QLineEdit()
-        text_input.setFixedWidth(150)
+        text_input.setFixedWidth(250)
 
         # Add an empty QLabel to introduce some blank space between the label and radio button
         spacer_label = QLabel("")
-        spacer_label.setFixedWidth(50)
+        spacer_label.setFixedWidth(150)
 
         radio_buttonID = QRadioButton("IDLE")
         radio_buttonID.toggled.connect(lambda: update_dynamic_labels(radio_buttonID))
@@ -306,13 +366,13 @@ class MainWindow(QMainWindow):
         # Add layout for the text_input1 and radio_button1 pair
         row_layout1 = QHBoxLayout()
         row_label1 = QLabel("Engine No.")
-        row_label1.setFixedWidth(80)
+        row_label1.setFixedWidth(150)
         text_input1 = QLineEdit()
-        text_input1.setFixedWidth(150)
+        text_input1.setFixedWidth(250)
 
         # Add an empty QLabel to introduce some blank space between the label and radio button
         spacer_label1 = QLabel("")
-        spacer_label1.setFixedWidth(50)
+        spacer_label1.setFixedWidth(150)
 
         radio_buttonCI = QRadioButton("CLUTCH IN")
         radio_buttonCI.toggled.connect(lambda: update_dynamic_labels(radio_buttonCI))
@@ -325,13 +385,13 @@ class MainWindow(QMainWindow):
         # Add layout for the text_input1 and radio_button1 pair
         row_layout2 = QHBoxLayout()
         row_label2 = QLabel("Frame No.")
-        row_label2.setFixedWidth(80)
+        row_label2.setFixedWidth(150)
         text_input2 = QLineEdit()
-        text_input2.setFixedWidth(150)
+        text_input2.setFixedWidth(250)
 
         # Add an empty QLabel to introduce some blank space between the label and radio button
         spacer_label2 = QLabel("")
-        spacer_label2.setFixedWidth(50)
+        spacer_label2.setFixedWidth(150)
 
         radio_buttonTA = QRadioButton("TOP ALL LOAD RATIO")
         radio_buttonTA.toggled.connect(lambda: update_dynamic_labels(radio_buttonTA))
@@ -343,14 +403,14 @@ class MainWindow(QMainWindow):
 
         # Add layout for the text_input1 and radio_button1 pair
         row_layout3 = QHBoxLayout()
-        row_label3 = QLabel("Temp.")
-        row_label3.setFixedWidth(80)
+        row_label3 = QLabel("Distance")
+        row_label3.setFixedWidth(150)
         text_input3 = QLineEdit()
-        text_input3.setFixedWidth(150)
+        text_input3.setFixedWidth(250)
 
         # Add an empty QLabel to introduce some blank space between the label and radio button
         spacer_label3 = QLabel("")
-        spacer_label3.setFixedWidth(50)
+        spacer_label3.setFixedWidth(150)
 
         radio_buttonCS = QRadioButton("CLUTCH STALL")
         radio_buttonCS.toggled.connect(lambda: update_dynamic_labels(radio_buttonCS))
@@ -363,15 +423,15 @@ class MainWindow(QMainWindow):
         # Add layout for the text_input1 and radio_buttonOT pair
         row_layout4 = QHBoxLayout()
         row_label4 = QLabel("PIC")
-        row_label4.setFixedWidth(80)
+        row_label4.setFixedWidth(150)
         text_input4 = QLineEdit()
-        text_input4.setFixedWidth(150)
+        text_input4.setFixedWidth(250)
         self.radio_buttonOT = QRadioButton("OTHER")  # Use self.radio_buttonOT
         self.radio_buttonOT.toggled.connect(lambda: update_dynamic_labels(self.radio_buttonOT))
 
         # Add an empty QLabel to introduce some blank space between the label and radio button
         spacer_label4 = QLabel("")
-        spacer_label4.setFixedWidth(50)
+        spacer_label4.setFixedWidth(150)
 
         row_layout4.addWidget(row_label4)
         row_layout4.addWidget(text_input4)
@@ -388,8 +448,8 @@ class MainWindow(QMainWindow):
 
         # Set the fixed width for the left layout
         combined_widget_left = add_outline(combined_layout_left)
-        combined_widget_left.setFixedWidth(470)  # Set the fixed width for the left layout
-        combined_widget_left.setFixedHeight(200)  # Set the fixed width for the left layout
+        combined_widget_left.setFixedWidth(740)  # Set the fixed width for the left layout
+        combined_widget_left.setFixedHeight(250)  # Set the fixed width for the left layout
 
         # Create the right layout
         combined_layout_right = QVBoxLayout()
@@ -400,9 +460,6 @@ class MainWindow(QMainWindow):
         # Create a container widget for the chart view and print button
         chart_and_print_container = QWidget()
         chart_and_print_layout = QVBoxLayout(chart_and_print_container)
-
-
-
 
 
         # Call create_chart to create the chart and add it to the layout
@@ -445,8 +502,8 @@ class MainWindow(QMainWindow):
 
         # Set the fixed width for the right layout
         combined_widget_right = add_outline(combined_layout_right)
-        combined_widget_right.setFixedWidth(535)  # Set the fixed width for the right layout
-        combined_widget_right.setFixedHeight(200)  # Set the fixed width for the left layout
+        combined_widget_right.setFixedWidth(620)  # Set the fixed width for the right layout
+        combined_widget_right.setFixedHeight(250)  # Set the fixed width for the left layout
 
         # Add both combined layouts to the top layout
         combined_layout_top.addWidget(combined_widget_left)
@@ -461,15 +518,20 @@ class MainWindow(QMainWindow):
         self.row_label0 = QLabel("IDLE")  # Make it an instance variable
         font = self.row_label0.font()  # Get the current font
         font.setBold(True)  # Set the font to bold
-        font.setPointSize(12)  # Set the desired font size
+        font.setPointSize(18)  # Set the desired font size
         self.row_label0.setFont(font)  # Apply the modified font to the label
         self.row_label0.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(self.row_label0, 1, 0)
+        self.row_label0.setStyleSheet("color: blue;")  # Set the font color to blue
+        combined_layout_box2.addWidget(self.row_label0, 1, 0, 2, 2)
+
+        # Font for the label
+        font_duration_label = QFont("Arial", 14)  # Adjust the font family and size as needed
 
         # Add "Duration" label and radio button to the first column
         row_label = QLabel("Duration:")
         row_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_label, 2, 1)
+        row_label.setFont(font_duration_label)  # Set the font for the label
+        combined_layout_box2.addWidget(row_label, 3, 0, 2, 1)
 
         # Add dropdown menu to the second column
         dropdown = QComboBox()
@@ -480,35 +542,61 @@ class MainWindow(QMainWindow):
         if default_index != -1:
             dropdown.setCurrentIndex(default_index)
 
+        # Set font size for the default item
+        font = dropdown.font()
+        font.setPointSize(14)  # Set the desired font size for the default item
+        dropdown.setFont(font)
+
         dropdown.setFixedWidth(100)  # Set the desired fixed width
-        combined_layout_box2.addWidget(dropdown, 2, 2)
+        combined_layout_box2.addWidget(dropdown, 3, 1, 2, 1)
 
         radio_button = QRadioButton("Auto Test")
-        combined_layout_box2.addWidget(radio_button, 3, 3)
+        font = radio_button.font()  # Get the current font
+        font.setPointSize(14)  # Set the desired font size
+        font.setBold(True)  # Make the text bold
+        radio_button.setFont(font)  # Apply the modified font to the radio button
+        combined_layout_box2.addWidget(radio_button, 4, 2, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Add "Empty" label and radio button to the third column
         row_label1 = QLabel("")
         row_label1.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         combined_layout_box2.addWidget(row_label1, 4, 0)
 
+        # Font for the label
+        font_time_label = QFont("Arial", 14)  # Adjust the font family and size as needed
+
         row_label1 = QLabel("Time Limit:")
         row_label1.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_label1, 4, 1)
+        row_label1.setFont(font_time_label)  # Set the font for the label
+        combined_layout_box2.addWidget(row_label1, 5, 0, 2, 1)
 
         # Add dropdown menu to the fourth column
         dropdown1 = QComboBox()
         dropdown1.addItems([str(i) for i in range(1, 11)])
-        combined_layout_box2.addWidget(dropdown1, 4, 2)
+        combined_layout_box2.addWidget(dropdown1, 5, 1, 2, 1)
+        # Set font size for the default item
+        font = dropdown1.font()
+        font.setPointSize(14)  # Set the desired font size for the default item
+        dropdown1.setFont(font)
+
 
         radio_button1 = QRadioButton("Manual Test")
-        combined_layout_box2.addWidget(radio_button1, 3, 4)
-
+        font = radio_button1.font()  # Get the current font
+        font.setPointSize(14)  # Set the desired font size
+        font.setBold(True)  # Make the text bold
+        radio_button1.setFont(font)  # Apply the modified font to the radio button
+        combined_layout_box2.addWidget(radio_button1, 4, 3, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Add "Empty" label and radio button to the third column
         row_labelRPM = QLabel("RPM COUNTER DEVICE")
         row_labelRPM.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelRPM, 1, 5, 1,3)
 
+        # Set font size for the label
+        font = row_labelRPM.font()
+        font.setPointSize(14)  # Set the desired font size
+        row_labelRPM.setFont(font)
+
+        combined_layout_box2.addWidget(row_labelRPM, 1, 4, 1, 3)
 
         # Set the font to bold
         font = row_labelRPM.font()
@@ -517,48 +605,89 @@ class MainWindow(QMainWindow):
 
         # Create the indicators for NE, NC, and NOCC with labels
         self.buttonNE = self.create_indicator("grey")
-        self.buttonNC = self.create_indicator("grey")
-        self.buttonNOCC = self.create_indicator("grey")
+        self.buttonNE1 = self.create_indicator("grey")
+        self.buttonNE2 = self.create_indicator("grey")
 
-        # Add indicators to the layout
-        combined_layout_box2.addWidget(self.buttonNE, 2, 5)
-        combined_layout_box2.addWidget(self.buttonNC, 2, 6)
-        combined_layout_box2.addWidget(self.buttonNOCC, 2, 7)
+
+        self.buttonNC = self.create_indicator("grey")
+        self.buttonNC1 = self.create_indicator("grey")
+        self.buttonNC2 = self.create_indicator("grey")
+
+        self.buttonNOCC = self.create_indicator("grey")
+        self.buttonNOCC1 = self.create_indicator("grey")
+        self.buttonNOCC2 = self.create_indicator("grey")
+
+        # Add the indicators to the layout with merged columns
+        combined_layout_box2.addWidget(self.buttonNE, 2, 4)
+        combined_layout_box2.addWidget(self.buttonNE1, 3, 4)
+        combined_layout_box2.addWidget(self.buttonNE2, 4, 4)
+
+
+        combined_layout_box2.addWidget(self.buttonNC, 2, 5)
+        combined_layout_box2.addWidget(self.buttonNC1, 3, 5)
+        combined_layout_box2.addWidget(self.buttonNC2, 4, 5)
+
+
+        combined_layout_box2.addWidget(self.buttonNOCC, 2, 6)
+        combined_layout_box2.addWidget(self.buttonNOCC1, 3, 6)
+        combined_layout_box2.addWidget(self.buttonNOCC2, 4, 6)
 
         # Print statements for debugging
         print("Indicator NE size:", self.buttonNE.sizeHint())
         print("Indicator NC size:", self.buttonNC.sizeHint())
         print("Indicator NOCC size:", self.buttonNOCC.sizeHint())
 
-        # Add "Empty" label and radio button to the third column
-        row_labelNE = QLabel("NE")
-        row_labelNE.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNE, 2, 5)
+        # Font for the labels
+        font1 = QFont("Arial", 19)  # You can adjust the font family and size
+        font1.setBold(True)  # Set the font weight to bold
+
+        # Font color for the labels
+        font_color = "white"
 
         # Add "Empty" label and radio button to the third column
-        row_labelNC = QLabel("NC")
-        row_labelNC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNC, 2, 6)
+        row_labelNE = QLabel("NE ")
+        row_labelNE.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
+        combined_layout_box2.addWidget(row_labelNE, 2, 4, 3, 1)
+        row_labelNE.setFont(font1)  # Set the font for the label
+        row_labelNE.setStyleSheet(f"color: {font_color};")  # Set the font color
+
 
         # Add "Empty" label and radio button to the third column
-        row_labelNOCC = QLabel("NOCC")
-        row_labelNOCC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNOCC, 2, 7)
+        row_labelNC = QLabel("NC ")
+        row_labelNC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
+        combined_layout_box2.addWidget(row_labelNC, 2, 5, 3, 1)
+        row_labelNC.setFont(font1)  # Set the font for the label
+        row_labelNC.setStyleSheet(f"color: {font_color};")  # Set the font color
+
 
         # Add "Empty" label and radio button to the third column
-        row_labelNE0 = QLabel("0000")
+        row_labelNOCC = QLabel("NOCC ")
+        row_labelNOCC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
+        combined_layout_box2.addWidget(row_labelNOCC, 2, 6, 3, 1)
+        row_labelNOCC.setFont(font1)  # Set the font for the label
+        row_labelNOCC.setStyleSheet(f"color: {font_color};")  # Set the font color
+
+        # Font for the labels
+        font2 = QFont("Arial", 20)  # You can adjust the font family and size
+
+        # Add "Empty" label and radio button to the third column
+        row_labelNE0 = QLabel("0000 ")
         row_labelNE0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNE0, 3, 5)
+        combined_layout_box2.addWidget(row_labelNE0, 5, 4, 3, 1)
+        row_labelNE0.setFont(font2)  # Set the font for the label
+
 
         # Add "Empty" label and radio button to the third column
-        row_labelNC0 = QLabel("0000")
+        row_labelNC0 = QLabel("0000 ")
         row_labelNC0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNC0, 3, 6)
+        combined_layout_box2.addWidget(row_labelNC0, 5, 5, 3, 1)
+        row_labelNC0.setFont(font2)  # Set the font for the label
 
         # Add "Empty" label and radio button to the third column
-        row_labelNOCC0 = QLabel("0000")
+        row_labelNOCC0 = QLabel("0000 ")
         row_labelNOCC0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNOCC0, 3, 7)
+        combined_layout_box2.addWidget(row_labelNOCC0, 5, 6, 3, 1)
+        row_labelNOCC0.setFont(font2)  # Set the font for the label
 
 ###### # Example of calling a function from labjacku3.py
         #result = write_data_to_file()
@@ -570,18 +699,33 @@ class MainWindow(QMainWindow):
         #print(f"Proximity sensor reading: {proximity_value}")
 
         # STOPWATCH AREA
-        # Add stopwatch labels
+        # Label "Stopwatch:"
         stopwatch_label = QLabel("Stopwatch:")
         stopwatch_label.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(stopwatch_label, 1, 8)
 
+        # Set font size for the label
+        font_stopwatch_label = stopwatch_label.font()
+        font_stopwatch_label.setPointSize(14)  # Set the desired font size
+        font_stopwatch_label.setBold(True)  # Set the font to bold
+        stopwatch_label.setFont(font_stopwatch_label)
+
+        combined_layout_box2.addWidget(stopwatch_label, 2, 9, 2, 1)
+
+        # Label "00:00"
         stopwatch_display = QLabel("00:00")
-        stopwatch_display.setAlignment(Qt.AlignmentFlag.AlignCenter| Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(stopwatch_display, 2, 8)
+        stopwatch_display.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+
+        # Set font size for the label
+        font_stopwatch_display = stopwatch_display.font()
+        font_stopwatch_display.setPointSize(14)  # Set the desired font size
+        font_stopwatch_display.setBold(True)  # Set the font to bold
+        stopwatch_display.setFont(font_stopwatch_display)
+
+        combined_layout_box2.addWidget(stopwatch_display, 4, 9, 2,1)
 
         # Chart printing button
         # Add the print button to the layout near the stopwatch_label
-        combined_layout_box2.addWidget(print_button, 1, 9)
+        combined_layout_box2.addWidget(print_button, 1, 10)
 
 
         # Create an instance of QElapsedTimer for measuring elapsed time
@@ -605,7 +749,7 @@ class MainWindow(QMainWindow):
 
         # Set the fixed width for the box2 layout
         combined_widget_box2 = add_outline(combined_layout_box2)
-        combined_widget_box2.setFixedWidth(1010)  # Set the fixed width for the left layout
+        combined_widget_box2.setFixedWidth(1366)  # Set the fixed width for the left layout
         # Remove the fixed height for now to let it adjust dynamically
         combined_widget_box2.setFixedHeight(155)  # Set the fixed width for the left layout
 
@@ -627,17 +771,40 @@ class MainWindow(QMainWindow):
         self.ne_table.setHorizontalHeaderLabels(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "AVERAGE"])
         self.ne_table.setVerticalHeaderLabels(["NE", "NC", "NOCC", "RATIO"])
 
-        # Set background color for column headers
-        for i in range(self.ne_table.columnCount()):
-            item = self.ne_table.horizontalHeaderItem(i)
-            item.setBackground(QColor(211, 211, 211))
+        # Set font size for horizontal header
+        font_horizontal_header = self.ne_table.horizontalHeader().font()
+        font_horizontal_header.setPointSize(16)  # Set the desired font size
+        self.ne_table.horizontalHeader().setFont(font_horizontal_header)
 
-        # Set background color for row headers
-        for i in range(self.ne_table.rowCount()):
-            item = self.ne_table.verticalHeaderItem(i)
-            item.setBackground(QColor(211, 211, 211))
+        # Set font size for vertical header
+        font_vertical_header = self.ne_table.verticalHeader().font()
+        font_vertical_header.setPointSize(16)  # Set the desired font size
+        self.ne_table.verticalHeader().setFont(font_vertical_header)
+
+        # Set resize mode for each column
+        column_stretch_factors = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]  # Adjust the values as needed
+
+        for col, stretch_factor in enumerate(column_stretch_factors):
+            self.ne_table.horizontalHeader().setSectionResizeMode(col, QHeaderView.ResizeMode.Stretch)
 
         table_layout.addWidget(self.ne_table)
+
+        # Set background color for column headers using hex code
+        header_color = QColor("#D3D3D3")  # Replace with your hex code
+        for i in range(self.ne_table.columnCount()):
+            item = self.ne_table.horizontalHeaderItem(i)
+            item.setBackground(header_color)
+
+        # Set background color for row headers using hex code
+        row_header_color = QColor("#D3D3D3")  # Replace with your hex code
+        for i in range(self.ne_table.rowCount()):
+            item = self.ne_table.verticalHeaderItem(i)
+            item.setBackground(row_header_color)
+
+        # Set background color for the table using hex code
+        table_color = QColor("#EFEFEF")  # Replace with your hex code
+        self.ne_table.setStyleSheet(f"QTableWidget {{ background-color: {table_color.name()}; }}")
+
 
         # Repeat the process for the second set of layouts (box2 and box3)
         combined_layout_box3 = QVBoxLayout()
@@ -650,7 +817,7 @@ class MainWindow(QMainWindow):
 
         # Set the fixed width for the left layout
         combined_widget_box3 = add_outline(combined_layout_box3)
-        combined_widget_box3.setFixedWidth(1010)  # Set the fixed width for the left layout
+        combined_widget_box3.setFixedWidth(1366)  # Set the fixed width for the left layout
         combined_widget_box3.setFixedHeight(285)  # Set the fixed width for the left layout
 
         # Add both combined layouts to the bottom layout
@@ -707,7 +874,7 @@ class MainWindow(QMainWindow):
 
         # Set the fixed width for the box4 layout
         combined_widget_box4 = add_outline(combined_layout_box4)
-        combined_widget_box4.setFixedWidth(1010)  # Set the fixed width for the left layout
+        combined_widget_box4.setFixedWidth(1366)  # Set the fixed width for the left layout
         combined_widget_box4.setFixedHeight(95)  # Set the fixed width for the left layout
 
         # Add both combined layouts to the bottom layout
@@ -722,9 +889,9 @@ class MainWindow(QMainWindow):
         exit_button = QPushButton("EXIT")
         start_button.setFixedWidth(100)
         stop_button.setFixedWidth(100)
-
         view_button.setFixedWidth(100)
         exit_button.setFixedWidth(100)
+
 
         start_button.setStyleSheet(button_style)
         stop_button.setStyleSheet(button_style)
@@ -803,6 +970,7 @@ class MainWindow(QMainWindow):
 
     def update_row_label(self, label, new_text):
        label.setText(new_text)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
