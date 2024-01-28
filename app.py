@@ -192,7 +192,7 @@ class MainWindow(QMainWindow):
 
         # Create indicator_frame
         indicator_frame = QFrame()
-        indicator_frame.setFixedWidth(80)
+        indicator_frame.setFixedWidth(180)
         indicator_frame.setFixedHeight(25)
         indicator_frame.setStyleSheet("QFrame { background-color: grey; border-radius: 13px; }")
 
@@ -207,7 +207,7 @@ class MainWindow(QMainWindow):
         indicator_button.setLayout(indicator_layout)
 
         # Set a fixed size for the indicator button
-        indicator_button.setFixedSize(90, 25)
+        indicator_button.setFixedSize(190, 25)
 
         return indicator_button
 
@@ -555,7 +555,7 @@ class MainWindow(QMainWindow):
         font.setPointSize(14)  # Set the desired font size
         font.setBold(True)  # Make the text bold
         radio_button.setFont(font)  # Apply the modified font to the radio button
-        combined_layout_box2.addWidget(radio_button, 4, 2, alignment=Qt.AlignmentFlag.AlignCenter)
+        combined_layout_box2.addWidget(radio_button, 4, 2, 2, 1, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Add "Empty" label and radio button to the third column
         row_label1 = QLabel("")
@@ -585,7 +585,7 @@ class MainWindow(QMainWindow):
         font.setPointSize(14)  # Set the desired font size
         font.setBold(True)  # Make the text bold
         radio_button1.setFont(font)  # Apply the modified font to the radio button
-        combined_layout_box2.addWidget(radio_button1, 4, 3, alignment=Qt.AlignmentFlag.AlignLeft)
+        combined_layout_box2.addWidget(radio_button1, 4, 3, 2, 1, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Add "Empty" label and radio button to the third column
         row_labelRPM = QLabel("RPM COUNTER DEVICE")
@@ -596,7 +596,7 @@ class MainWindow(QMainWindow):
         font.setPointSize(14)  # Set the desired font size
         row_labelRPM.setFont(font)
 
-        combined_layout_box2.addWidget(row_labelRPM, 1, 4, 1, 3)
+        combined_layout_box2.addWidget(row_labelRPM, 1, 4, 2, 3)
 
         # Set the font to bold
         font = row_labelRPM.font()
@@ -618,19 +618,19 @@ class MainWindow(QMainWindow):
         self.buttonNOCC2 = self.create_indicator("grey")
 
         # Add the indicators to the layout with merged columns
-        combined_layout_box2.addWidget(self.buttonNE, 2, 4)
-        combined_layout_box2.addWidget(self.buttonNE1, 3, 4)
-        combined_layout_box2.addWidget(self.buttonNE2, 4, 4)
+        combined_layout_box2.addWidget(self.buttonNE, 3, 4)
+        combined_layout_box2.addWidget(self.buttonNE1, 4, 4)
+        combined_layout_box2.addWidget(self.buttonNE2, 5, 4)
 
 
-        combined_layout_box2.addWidget(self.buttonNC, 2, 5)
-        combined_layout_box2.addWidget(self.buttonNC1, 3, 5)
-        combined_layout_box2.addWidget(self.buttonNC2, 4, 5)
+        combined_layout_box2.addWidget(self.buttonNC, 3, 5)
+        combined_layout_box2.addWidget(self.buttonNC1, 4, 5)
+        combined_layout_box2.addWidget(self.buttonNC2, 5, 5)
 
 
-        combined_layout_box2.addWidget(self.buttonNOCC, 2, 6)
-        combined_layout_box2.addWidget(self.buttonNOCC1, 3, 6)
-        combined_layout_box2.addWidget(self.buttonNOCC2, 4, 6)
+        combined_layout_box2.addWidget(self.buttonNOCC, 3, 6)
+        combined_layout_box2.addWidget(self.buttonNOCC1, 4, 6)
+        combined_layout_box2.addWidget(self.buttonNOCC2, 5, 6)
 
         # Print statements for debugging
         print("Indicator NE size:", self.buttonNE.sizeHint())
@@ -647,7 +647,7 @@ class MainWindow(QMainWindow):
         # Add "Empty" label and radio button to the third column
         row_labelNE = QLabel("NE ")
         row_labelNE.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
-        combined_layout_box2.addWidget(row_labelNE, 2, 4, 3, 1)
+        combined_layout_box2.addWidget(row_labelNE, 3, 4, 3, 1)
         row_labelNE.setFont(font1)  # Set the font for the label
         row_labelNE.setStyleSheet(f"color: {font_color};")  # Set the font color
 
@@ -655,7 +655,7 @@ class MainWindow(QMainWindow):
         # Add "Empty" label and radio button to the third column
         row_labelNC = QLabel("NC ")
         row_labelNC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
-        combined_layout_box2.addWidget(row_labelNC, 2, 5, 3, 1)
+        combined_layout_box2.addWidget(row_labelNC, 3, 5, 3, 1)
         row_labelNC.setFont(font1)  # Set the font for the label
         row_labelNC.setStyleSheet(f"color: {font_color};")  # Set the font color
 
@@ -663,30 +663,30 @@ class MainWindow(QMainWindow):
         # Add "Empty" label and radio button to the third column
         row_labelNOCC = QLabel("NOCC ")
         row_labelNOCC.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)  # Set alignment
-        combined_layout_box2.addWidget(row_labelNOCC, 2, 6, 3, 1)
+        combined_layout_box2.addWidget(row_labelNOCC, 3, 6, 3, 1)
         row_labelNOCC.setFont(font1)  # Set the font for the label
         row_labelNOCC.setStyleSheet(f"color: {font_color};")  # Set the font color
 
         # Font for the labels
-        font2 = QFont("Arial", 20)  # You can adjust the font family and size
+        font2 = QFont("Arial", 40)  # You can adjust the font family and size
 
         # Add "Empty" label and radio button to the third column
         row_labelNE0 = QLabel("0000 ")
         row_labelNE0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNE0, 5, 4, 3, 1)
+        combined_layout_box2.addWidget(row_labelNE0, 6, 4, 4, 1)
         row_labelNE0.setFont(font2)  # Set the font for the label
 
 
         # Add "Empty" label and radio button to the third column
         row_labelNC0 = QLabel("0000 ")
         row_labelNC0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNC0, 5, 5, 3, 1)
+        combined_layout_box2.addWidget(row_labelNC0, 6, 5, 4, 1)
         row_labelNC0.setFont(font2)  # Set the font for the label
 
         # Add "Empty" label and radio button to the third column
         row_labelNOCC0 = QLabel("0000 ")
         row_labelNOCC0.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        combined_layout_box2.addWidget(row_labelNOCC0, 5, 6, 3, 1)
+        combined_layout_box2.addWidget(row_labelNOCC0, 6, 6, 4, 1)
         row_labelNOCC0.setFont(font2)  # Set the font for the label
 
 ###### # Example of calling a function from labjacku3.py
@@ -751,7 +751,7 @@ class MainWindow(QMainWindow):
         combined_widget_box2 = add_outline(combined_layout_box2)
         combined_widget_box2.setFixedWidth(1366)  # Set the fixed width for the left layout
         # Remove the fixed height for now to let it adjust dynamically
-        combined_widget_box2.setFixedHeight(155)  # Set the fixed width for the left layout
+        combined_widget_box2.setFixedHeight(185)  # Set the fixed width for the left layout
 
 
 
@@ -761,7 +761,6 @@ class MainWindow(QMainWindow):
         # THIRD ROW BOX
 
         # Repeat the process for the second set of layouts (box2 and box3)
-        combined_layout_box2 = QGridLayout()
 
         # Create table layout and NE table
         table_layout = QVBoxLayout()
@@ -954,8 +953,6 @@ class MainWindow(QMainWindow):
         central_layout.addLayout(combined_layout_bottom)
         central_layout.addLayout(combined_layout_bottom1)
         central_layout.addLayout(combined_layout_bottom2)
-
-
 
         # Set the fixed width for the left layout
         combined_widget_left = add_outline(combined_layout_left)
